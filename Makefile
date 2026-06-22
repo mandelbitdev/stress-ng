@@ -686,6 +686,7 @@ STRESS_SRC = \
 	stress-oom-pipe.c \
 	stress-opcode.c \
 	stress-open.c \
+	stress-ovpn.c \
 	stress-pagemove.c \
 	stress-pageswap.c \
 	stress-pci.c \
@@ -906,6 +907,10 @@ stress-ng: config.h $(OBJS)
 	$(eval LINK_TOOL := $(shell if [ -n "$(shell grep '^#define HAVE_EIGEN' config.h)" ]; then echo $(CXX); else echo $(CC); fi))
 	$(eval LDFLAGS_EXTRA := $(shell grep CONFIG_LDFLAGS config | sed 's/CONFIG_LDFLAGS +=//' | tr '\n' ' '))
 	$(PRE_V)$(LINK_TOOL) $(OBJS) -lm $(LDFLAGS) $(LDFLAGS_EXTRA) $(CFLAGS) -o $@
+
+stress-ovpn.o: stress-ovpn.c $(HEADERS) $(HEADERS_GEN)
+	$(PRE_Q)echo "CC $<"
+	$(PRE_V)$(CC) $(CFLAGS) -I/usr/include/libnl3 -DHAVE_CFLAGS='"$(CFLAGS)"' -DHAVE_LDFLAGS='"$(LDFLAGS)"' -DHAVE_CXXFLAGS='"$(CXXFLAGS)"' -c -o $@ $<
 
 stress-eigen-ops.o: config.h stress-eigen-ops.cpp stress-eigen-ops.c
 	$(PRE_V)if grep -q '^#define HAVE_EIGEN' config.h; then \
